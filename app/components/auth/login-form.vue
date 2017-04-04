@@ -1,6 +1,5 @@
 <template>
     <form @submit.prevent="login" :class="{ error: failed }">
-        <input v-model="url" type="url" placeholder="Koel's Host" autofocus required>
         <input v-model="email" type="email" placeholder="Email Address" required>
         <input v-model="password" type="password" placeholder="Password" required>
         <input type="submit" value="Log In">
@@ -9,6 +8,7 @@
 
 <script>
     import Vue from 'vue';
+    import config from '../../config';
 
     import ls from '../../services/ls';
     import userStore from '../../stores/user';
@@ -16,7 +16,6 @@
     export default {
         data() {
             return {
-                url: '',
                 email: '',
                 password: '',
                 failed: false,
@@ -27,7 +26,7 @@
             login() {
                 this.failed = false;
 
-                Vue.http.options.root = `${this.url}/api`;
+                Vue.http.options.root = `${config.url}/api`;
 
                 userStore.login(this.email, this.password, () => {
                     this.failed = false;
@@ -38,7 +37,7 @@
                     this.$dispatch('user:loggedin');
 
                     // Save these two variables into storage for later use.
-                    ls.set('koelHost', this.url);
+                    ls.set('koelHost', config.url);
                     ls.set('lastLoginEmail', this.email);
                 }, () => {
                     this.failed = true;
